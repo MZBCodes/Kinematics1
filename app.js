@@ -1,3 +1,15 @@
+let parent = document.getElementById('box');
+let body = document.getElementById('body');
+let basex = 0;
+let basey = 0;
+let gravity = -1.4;
+let xVariance = 40;
+let kineticFriction = .995;
+let wind = 20;
+let height = window.innerHeight;
+let width = window.innerWidth;
+let mouse = new MouseEvent("buttons");
+
 class Firework {
     constructor(node, x, y, fx, fy){
         this.node = node;
@@ -8,7 +20,28 @@ class Firework {
         this.ax = fx;
         this.ay = fy;
         this.counter = 0;
+        this.wind = 20;
         this.id = 0;
+        document.addEventListener('keyup', event => {
+            if (event.code === 'Space') {
+               this.applyWind(this);
+            }
+        })
+        document.addEventListener('keydown', event => {
+            if (event.code === 'Space') {
+               this.chargeWind(this);
+            }
+        })
+        document.addEventListener('keyup', event => {
+            if (event.code === 'ArrowDown') {
+               this.increaseGravity();
+            }
+        })
+        document.addEventListener('keyup', event => {
+            if (event.code === 'ArrowUp') {
+               this.decreaseGravity();
+            }
+        })
     }
 
     updatePosition() {
@@ -27,9 +60,35 @@ class Firework {
 
     }
 
+    chargeWind(firework){
+        firework.wind += 0.5;
+    }
+
+    applyWind(firework){
+        console.log("wind is being applied")
+        firework.applyForce((Math.random() * xVariance) - (xVariance / 2),Math.min(this.wind, 80))
+        this.wind = 20;
+
+    }
+
+    increaseGravity(){
+        gravity *= 1.05;
+        console.log("increasing gravity")
+    }
+
+    decreaseGravity(){
+        gravity /= 1.05;
+        console.log("decreasing gravity")
+
+    }
+
     applyFriction(){
-        this.vx *= .99;
-        console.log("applying");
+        if (this.vy == 0){
+            this.vx *= kineticFriction;
+        }
+        if (Math.abs(this.vx) < 0.5){
+            this.vx = 0;
+        }
     }
 
     checkEdge() {
@@ -42,8 +101,14 @@ class Firework {
         }
 
         if (this.y - 10 < -(height / 2 + 20)){
-            this.vy *= -.999;
+            this.vy *= -.9;
             this.y = -height/2 - 20;
+        }
+    }
+
+    stopBouncing() {
+        if (this.y <= -height / 2 && Math.abs(this.vy) <= 7){
+            this.vy = 0;
         }
     }
 
@@ -51,9 +116,16 @@ class Firework {
 
     update(){
         this.checkEdge();
-        this.applyForce(0, -1.4);
+
+        this.applyForce(0, gravity);
         this.updateVelocity();
+        this.applyFriction();
+        this.stopBouncing();
+        this.applyFriction();
         this.updatePosition();
+        if (mouse.buttons == 1){
+            console.log("left mouse button was pressed")
+        }
         this.ax = 0;
         this.ay = 0;
         this.counter += 10;
@@ -62,28 +134,11 @@ class Firework {
     }
 }
 
-
-
-let parent = document.getElementById('box');
-let change = 0;
-let x = 0;
-let basex = 0;
-let basey = 0;
-let intervals = [];
-let height = window.innerHeight;
-let width = window.innerWidth;
-console.log("that's it");
-console.log(height,width)
-
-
 function spawnFirework() {
     let newFirework = document.createElement("div");
     parent.appendChild(newFirework);
     newFirework.className = "firework";
-    let firework = new Firework(newFirework, basex, basey, Math.random() * 20 - 10,20);
-    if (firework.node.y < -1000){
-
-    }
+    let firework = new Firework(newFirework, basex, basey, Math.random() * xVariance - xVariance / 2,25);
     let interval = setInterval(updateFirework, 16, firework);
     firework.id = interval;
 }
