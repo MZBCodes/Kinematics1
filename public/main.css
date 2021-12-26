@@ -1,0 +1,72 @@
+body {
+    padding: 0;
+    margin: 0;
+    position: relative;
+    background-color: black;
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+.box {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    margin-top: calc(25% - 100px);
+    border-radius: 50%;
+    background-color: beige;
+    text-align: center;
+    line-height: 200px;
+    color: black;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 24px;
+    -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -ms-user-select: none;
+   user-select: none;
+}
+.explosion {
+    content: '';
+    border-radius: 50%;
+    display: block;
+    position: absolute;
+    text-align: center;
+    margin: 0px auto;
+    border: 2px solid white;
+    animation: grow-and-fade 0.5s 1 linear forwards;
+}
+
+@keyframes grow-and-fade {
+    0% {
+        transform: translateX(100px) translatey(0px);
+        width: 0px;
+        height: 0px;
+        opacity: 1;
+    }
+
+    99% {
+        transform: translateX(0px) translateY(-100px);
+        width: 200px;
+        height: 200px;
+        opacity: 0;
+    }
+
+    100% {
+        width: 200px;
+        height: 200px;
+        opacity: 0;
+        display: none;
+    }
+}
+
+.firework {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    top: 100px;
+    left: 100px;
+    z-index: -1;
+    background-color: white;
+}
